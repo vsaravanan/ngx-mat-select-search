@@ -1,7 +1,9 @@
-import { Component, ViewChild, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
-
+import { Component, ViewChild, AfterViewInit, OnInit, OnDestroy, Injectable } from '@angular/core';
+import { Http } from '@angular/http';
+import 'rxjs/add/operator/map'
+import { Observable } from 'rxjs/Observable';
 import { FormControl } from '@angular/forms';
-import {MatSelect} from '@angular/material';
+import { MatSelect } from '@angular/material';
 
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs';
@@ -19,9 +21,23 @@ interface Bank {
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  constructor(private http: Http) {
 
+    this.getBanks().subscribe(b => this.banks = b);
 
+  }
 
+  @Injectable()
+  public getBanks(): Observable<Bank[]>   {
+
+    return this.http
+        .get("http://localhost:3000/banks")
+        .map(response => {
+            return response.json();
+        })
+        ;
+
+  }
     /** control for the selected bank for multi-selection */
   public bankMultiCtrl: FormControl = new FormControl();
 
@@ -29,26 +45,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public bankMultiFilterCtrl: FormControl = new FormControl();
 
   /** list of banks */
-  private banks: Bank[] = [
-    {name: 'apphugIn', id: 'A'},
-    {name: 'batHugFr', id: 'B'},
-    {name: 'Bank C (France)', id: 'C'},
-    {name: 'hungary', id: 'D'},
-    {name: 'Hungary', id: 'E'},
-    {name: 'Bank F (Italy)', id: 'F'},
-    {name: 'Bank G (Italy)', id: 'G'},
-    {name: 'Bank H (Italy)', id: 'H'},
-    {name: 'Bank I (Italy)', id: 'I'},
-    {name: 'Bank J (Italy)', id: 'J'},
-    {name: 'Bank K (Italy)', id: 'K'},
-    {name: 'Bank L (Germany)', id: 'L'},
-    {name: 'Bank M (Germany)', id: 'M'},
-    {name: 'Bank N (Germany)', id: 'N'},
-    {name: 'Bank O (Germany)', id: 'O'},
-    {name: 'Bank P (Germany)', id: 'P'},
-    {name: 'Bank Q (Germany)', id: 'Q'},
-    {name: 'Bank R (Germany)', id: 'R'}
-  ];
+  private banks: Bank[];
 
 
   /** list of banks filtered by search keyword for multi-selection */
