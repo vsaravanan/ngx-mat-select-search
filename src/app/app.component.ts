@@ -23,7 +23,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private http: Http) {
 
-    this.getBanks().subscribe(b => this.banks = b);
 
   }
 
@@ -62,16 +61,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.bankMultiCtrl.setValue([]);
 
+    this.getBanks().subscribe(b => {
+      this.banks = b;
+    
+      this.filteredBanksMulti.next(this.banks.slice());
+
+
+      this.bankMultiFilterCtrl.valueChanges
+        .pipe(takeUntil(this._onDestroy))
+        .subscribe(() => {
+          this.filterBanksMulti();
+        });
+    });
+
     // load the initial bank list
 
-    this.filteredBanksMulti.next(this.banks.slice());
-
-
-    this.bankMultiFilterCtrl.valueChanges
-      .pipe(takeUntil(this._onDestroy))
-      .subscribe(() => {
-        this.filterBanksMulti();
-      });
 
   }
 
