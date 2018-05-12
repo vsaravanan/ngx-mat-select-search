@@ -57,17 +57,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getBanks().subscribe(b => {
       this.banks = b;
     
+      // load the initial bank list
       this.filteredBanksMulti.next(this.banks.slice());
 
     });
 
 
-    // load the initial bank list
-      this.bankMultiFilterCtrl.valueChanges
-        .pipe(takeUntil(this._onDestroy))
-        .subscribe(() => {
-          this.filterBanksMulti();
-        });
+    // listen for search field value changes
+    this.bankMultiFilterCtrl.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.filterBanksMulti();
+      });
 
   }
 
