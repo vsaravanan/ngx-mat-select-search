@@ -1,5 +1,6 @@
 import { Component, ViewChild, AfterViewInit, OnInit, OnDestroy, Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+//import { Http } from '@angular/http';
+import { HttpClient } from "@angular/common/http";
 import 'rxjs/add/operator/map'
 import { Observable } from 'rxjs/Observable';
 import { FormControl } from '@angular/forms';
@@ -21,21 +22,13 @@ interface Bank {
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  constructor(private http: Http) {
-
-
-  }
+  constructor(protected httpClient: HttpClient) {}
 
   @Injectable()
   public getBanks(): Observable<Bank[]>   {
 
-    return this.http
-        .get("http://localhost:3000/banks")
-        .map(response => {
-            return response.json();
-        })
-        ;
-
+    return this.httpClient
+        .get<Bank[]>("http://localhost:3000/banks");
   }
     /** control for the selected bank for multi-selection */
   public bankMultiCtrl: FormControl = new FormControl();
@@ -66,16 +59,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     
       this.filteredBanksMulti.next(this.banks.slice());
 
+    });
 
+
+    // load the initial bank list
       this.bankMultiFilterCtrl.valueChanges
         .pipe(takeUntil(this._onDestroy))
         .subscribe(() => {
           this.filterBanksMulti();
         });
-    });
-
-    // load the initial bank list
-
 
   }
 
